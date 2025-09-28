@@ -27,6 +27,8 @@ Os dados são persistidos no Local Storage do navegador para manter o estado ent
 
 ## 🚀 Como Executar
 
+Pode abrir no link https://ritajeveaux.github.io/fake-store-api/  ou, se preferir
+
 1. Clone este repositório para sua máquina local:
    ```bash
    git clone <URL_DO_REPOSITORIO>
@@ -34,6 +36,7 @@ Os dados são persistidos no Local Storage do navegador para manter o estado ent
 2. Navegue até o diretório do projeto.
 3. Abra o arquivo `index.html` em seu navegador de preferência (como Google Chrome, Firefox, etc.).
 
+   
 A aplicação estará pronta para uso!
 
 ## 📂 Estrutura dos Arquivos
