@@ -1,42 +1,92 @@
 const productsList = document.querySelector('.products');
 const nameInput = document.querySelector('#name');
-const id = document.querySelector('#id');
-const price = document.querySelector('#price');
-const image = document.querySelector('#image');
+const idInput = document.querySelector('#id');
+const priceInput = document.querySelector('#price');
+const imageInput = document.querySelector('#image');
 const addBtn = document.querySelector('#add');
 const deleteBtn = document.querySelector('#delete');
 const updateBtn = document.querySelector('#update');
 
-// deleteBtn.addEventListener('click', (event) => {
-//   event.preventDefault();
-//   const products = getProducts();
-// });
+//////////////////
+function clearForm() {
+  idInput.value = '';
+  nameInput.value = '';
+  priceInput.value = '';
+  imageInput.value = '';
+}
 
+//////////////////
 addBtn.addEventListener('click', (event) => {
   event.preventDefault();
-  if (nameInput.value && image.value && price.value) {
+  if (nameInput.value && imageInput.value && priceInput.value) {
     const product = {
-      // Usando um ID baseado no tempo para evitar colisões simples
+      // Usando um ID baseado no tempo para evitar conflito
       id: new Date().getTime(),
       title: nameInput.value,
-      price: price.value,
-      image: image.value,
+      price: priceInput.value,
+      image: imageInput.value,
     };
     const products = getProducts();
     products.unshift(product);
     saveProducts(products);
     renderProducts(products);
-    nameInput.value = '';
-    price.value = '';
-    image.value = '';
+    clearForm();
   } else {
     alert('The name, price and image fields are required.');
   }
 });
 
+//////////////////
+updateBtn.addEventListener('click', (event) => {
+  event.preventDefault();
+  const idToUpdate = parseInt(idInput.value);
+  if (!idToUpdate) {
+    alert('The ID field is required to update a product.');
+    return;
+  }
+  const products = getProducts();
+  const productIndex = products.findIndex(
+    (product) => product.id === idToUpdate,
+  );
+  if (productIndex !== -1) {
+    const productToUpdate = products[productIndex];
+    if (nameInput.value) productToUpdate.title = nameInput.value;
+    if (priceInput.value) productToUpdate.price = priceInput.value;
+    if (imageInput.value) productToUpdate.image = imageInput.value;
+    saveProducts(products);
+    renderProducts(products);
+    clearForm();
+  } else {
+    alert('Product not found with the given ID.');
+  }
+});
+
+//////////////////
+deleteBtn.addEventListener('click', (event) => {
+  event.preventDefault();
+  if (idInput.value) {
+    const products = getProducts();
+    const index = products.findIndex(
+      (product) => product.id === parseInt(idInput.value),
+    );
+    if (index !== -1) {
+      products.splice(index, 1);
+      saveProducts(products);
+      renderProducts(products);
+      clearForm();
+    } else {
+      alert('Product not found.');
+    }
+  } else {
+    alert('The ID field is required.');
+  }
+});
+
+//////////////////
 function renderProducts(products) {
   productsList.innerHTML = '';
   products.forEach((product) => {
+    // Adicionando data-id ao li para fácil identificação
     const li = document.createElement('li');
     li.innerHTML = `
     <div class="productCard">
@@ -46,44 +96,49 @@ function renderProducts(products) {
     <button>Buy Now</button>
     </div>  
   `;
+    li.querySelector('.productCard').addEventListener('click', () => {
+      idInput.value = product.id;
+      nameInput.value = product.title;
+      priceInput.value = product.price;
+      imageInput.value = product.image;
+    });
     productsList.appendChild(li);
   });
 }
 
+//////////////////
 function saveProducts(products) {
   localStorage.setItem('fakestore', JSON.stringify(products));
 }
 
+//////////////////
 function getProducts() {
   const products = localStorage.getItem('fakestore');
   return products ? JSON.parse(products) : [];
 }
 
-function fetchProducts() {
-  let products = localStorage.getItem('fakestore');
-  if (products) {
-    renderProducts(JSON.parse(products));
-    return;
-  } else {
+//////////////////
+async function fetchProducts() {
+  let products = getProducts();
+  if (products.length === 0) {
     const url = 'https://fakestoreapi.com/products';
-    fetch(url)
-      .then((response) => {
-        return response.json();
-      })
-      .then((data) => {
-        products = data.map((product) => ({
-          id: product.id,
-          title: product.title,
-          price: product.price,
-          image: product.image,
-        }));
-        saveProducts(products);
-        renderProducts(products);
-      })
-      .catch((error) => {
-        console.error('Ocorreu um erro:', error);
-      });
+    try {
+      const response = await fetch(url);
+      const data = await response.json();
+      products = data.map((product) => ({
+        id: product.id,
+        title: product.title,
+        price: product.price,
+        image: product.image,
+      }));
+      saveProducts(products);
+    } catch (error) {
+      console.error('Ocorreu um erro ao buscar produtos da API:', error);
+      productsList.innerHTML =
+        '<li>Error loading products. Please try again later.</li>';
+    }
   }
+  renderProducts(products);
 }
 
 window.onload = fetchProducts;
