@@ -27,7 +27,7 @@ Os dados são persistidos no Local Storage do navegador para manter o estado ent
 
 ## 🚀 Como Executar
 
-Pode abrir no link https://ritajeveaux.github.io/fake-store-api/  ou, se preferir
+Pode abrir no link [Fake Store](https://ritajeveaux.github.io/fake-store-api/)  ou, se preferir
 
 1. Clone este repositório para sua máquina local:
    ```bash
