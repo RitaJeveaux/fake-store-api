@@ -10,6 +10,7 @@ header{
   color: white;
   padding: 10px;
   text-align: center;
+  position: inherit;
 }
 
  footer {
@@ -107,6 +108,7 @@ h1 {
   height: 100%;
   justify-content: space-between;
   overflow: hidden;
+  cursor: pointer;
 }
 
 .productCard img {
