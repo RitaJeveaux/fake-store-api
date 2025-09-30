@@ -10,7 +10,7 @@ header{
   color: white;
   padding: 10px;
   text-align: center;
-  position: inherit;
+ display:grid;
 }
 
  footer {
